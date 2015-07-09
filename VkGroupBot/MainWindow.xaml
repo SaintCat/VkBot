@@ -1,0 +1,36 @@
+﻿<Window x:Class="VkGroupBot.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="461.702" Width="646.723">
+    <Grid Margin="0,0,-8,-20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TabControl Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="432" Margin="10,10,0,0" VerticalAlignment="Top" Width="604">
+            <TabItem Header="My groups">
+                <Grid Background="#FFE5E5E5" HorizontalAlignment="Right" Width="594" Height="400" VerticalAlignment="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="172*"/>
+                        <ColumnDefinition Width="417*"/>
+                    </Grid.ColumnDefinitions>
+                    <GridSplitter HorizontalAlignment="Left" Height="390" VerticalAlignment="Top" Width="10" Margin="0,10,0,0" Grid.Column="2"/>
+                    <TextBlock Margin="15,0,0,10" TextWrapping="Wrap" VerticalAlignment="Bottom" Height="380" Grid.Column="2"><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asdasdasdasd asdasdas asdasd asd asd asd asdasd asd"/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run Text="asdasdasd asdasdas asdasd asd asd asd asdasd asd"/><LineBreak/><Run/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Statistics">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="Filling group" Margin="0,0,0,0">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40*"/>
+                        <ColumnDefinition Width="257*"/>
+                    </Grid.ColumnDefinitions>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</Window>
