@@ -39,11 +39,15 @@ namespace VkGroupBot.Utils
                 {
                     allPosts.Add(getKef(post), post);
                     offset++;
+                    Thread.Sleep(1500);
                 }
-                Thread.Sleep(1000);
+                Thread.Sleep(2000);
             }
-            Post best = allPosts[allPosts.Keys.Max()];
-            postThis(best);
+            if (allPosts.Count > 0)
+            {
+                Post best = allPosts[allPosts.Keys.Max()];
+                postThis(best);
+            }
         }
 
         private void postThis(Post best)
@@ -123,7 +127,7 @@ namespace VkGroupBot.Utils
             rs.Write(boundarybytes, 0, boundarybytes.Length);
 
             string headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
-            string header = string.Format(headerTemplate, paramName, "ptoho.jpg", contentType);
+            string header = string.Format(headerTemplate, paramName, "photo.jpg", contentType);
             byte[] headerbytes = System.Text.Encoding.UTF8.GetBytes(header);
             rs.Write(headerbytes, 0, headerbytes.Length);
 

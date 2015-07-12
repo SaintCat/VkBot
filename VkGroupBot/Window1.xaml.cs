@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -114,9 +115,22 @@ namespace VkGroupBot
         {
             if (categoriesTreeView.SelectedItem is VkGroup)
             {
-                VkGroup item = (VkGroup)categoriesTreeView.SelectedItem;
-                new PostmanHelper(item).postNew();
+                const double interval60Minutes = 60 * 60 * 1000; // milliseconds to one hour
+                Timer checkForTime = new Timer(interval60Minutes);
+                    checkForTime.Elapsed += new ElapsedEventHandler(checkForTime_Elapsed);
+                checkForTime.Enabled = true;
             }
         }
-    }
+
+        void checkForTime_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            
+               try {
+            VkGroup item = (VkGroup)categoriesTreeView.SelectedItem;
+                new PostmanHelper(item).postNew();
+               } catch(Exception ex) {
+               }
+            }
+        }
+    
 }
