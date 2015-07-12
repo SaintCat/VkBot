@@ -1,0 +1,62 @@
+﻿<Window x:Class="VkGroupBot.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="475.702" Width="848.723">
+    <Grid Margin="0,0,-8,-4">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="76*"/>
+            <ColumnDefinition Width="773*"/>
+        </Grid.ColumnDefinitions>
+        <TabControl Grid.ColumnSpan="3" Margin="10">
+            <TabItem Header="My groups">
+                <Grid Background="#FFE5E5E5" Margin="0,0,0,13">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="172*"/>
+                        <ColumnDefinition Width="417*"/>
+                    </Grid.ColumnDefinitions>
+                    <GridSplitter HorizontalAlignment="Left" Width="6" Margin="0,10,0,0" Grid.Column="2" BorderBrush="#FF497DB2" Foreground="#FFBB1F1F" Background="#FF919191"/>
+                    <ToolBar Grid.Column="1" Margin="5,10,10,0" VerticalAlignment="Top" Height="30" Header="">
+                        <Button>New</Button>
+                        <Button>Open</Button>
+                        <Button>Close</Button>
+                        <Separator></Separator>
+                        <CheckBox FontWeight="Bold">Bold</CheckBox>
+                        <CheckBox FontStyle="Italic">Italic</CheckBox>
+                    </ToolBar>
+                    <TreeView  SelectedItemChanged="categoriesTreeView_Expanded" Name="categoriesTreeView" Grid.Column="1" Margin="10,45,10,10">
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Name="img" Source="{Binding IconSource}"/>
+                                    <TextBlock Text="{Binding Name}" Margin="0,0,4,0" />
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem">
+                                <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                    </TreeView>
+                    <Grid Grid.Column="2" Margin="11,10,10,10">
+                        <Image Name="image" Margin="10,10,416,173"/>
+                        <Label Name="statusLabel" Content="status&#xA;" HorizontalAlignment="Left" Margin="143,70,0,0" VerticalAlignment="Top" Width="262" Height="31"/>
+                        <TextBlock Name="nameLabel"  HorizontalAlignment="Left" Margin="143,25,0,0" TextWrapping="Wrap" Text="GroupName" VerticalAlignment="Top" RenderTransformOrigin="0.53,0.281" Height="40" Width="257" FontSize="16" FontWeight="Bold"/>
+                        <TextBlock Name="linkLabel" HorizontalAlignment="Left" Margin="400,25,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="19" Width="154"/>
+                        <Button Content="New Post&#xD;&#xA;" HorizontalAlignment="Left" Margin="462,168,-1,0" VerticalAlignment="Top" Width="93" Height="24" Click="Button_Click_1"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Statistics"/>
+            <TabItem Header="Log"/>
+            <TabItem Header="Filling group">
+                
+            </TabItem>
+        </TabControl>
+        <TextBlock Grid.Column="2" HorizontalAlignment="Left" Margin="888,163,-122,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
+
+    </Grid>
+</Window>

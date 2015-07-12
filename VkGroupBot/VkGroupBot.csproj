@@ -13,6 +13,21 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -36,6 +51,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -53,18 +70,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    <Compile Include="Treeview\TreeViewItemBase.cs" />
+    <Compile Include="Treeview\VkGroup.cs" />
+    <Compile Include="Treeview\VkGroupCategory.cs" />
+    <Compile Include="Utils\PostmanHelper.cs" />
+    <Compile Include="Utils\VkGroupManager.cs" />
+    <Compile Include="Window1.xaml.cs">
+      <DependentUpon>Window1.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
+    <Page Include="Window1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -84,14 +105,92 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Compile Include="Utils\VkApiFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\group_forum.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\add.png" />
+    <Resource Include="icons\alert.png" />
+    <Resource Include="icons\cancel.png" />
+    <Resource Include="icons\category.png" />
+    <Resource Include="icons\characteristics.png" />
+    <Resource Include="icons\closed_folder.png" />
+    <Resource Include="icons\collapseTree.png" />
+    <Resource Include="icons\construction.png" />
+    <Resource Include="icons\create.png" />
+    <Resource Include="icons\danger.png" />
+    <Resource Include="icons\delete.png" />
+    <Resource Include="icons\devices.png" />
+    <Resource Include="icons\down.png" />
+    <Resource Include="icons\edit.png" />
+    <Resource Include="icons\editAttr.png" />
+    <Resource Include="icons\expandOne.png" />
+    <Resource Include="icons\expandTree.png" />
+    <Resource Include="icons\filter.png" />
+    <Resource Include="icons\firstItem.png" />
+    <Resource Include="icons\hierarchy.png" />
+    <Resource Include="icons\Instructions.png" />
+    <Resource Include="icons\lastItem.png" />
+    <Resource Include="icons\leaf_tree.png" />
+    <Resource Include="icons\medical_examination.png" />
+    <Resource Include="icons\new.png" />
+    <Resource Include="icons\nextItem.png" />
+    <Resource Include="icons\ok.png" />
+    <Resource Include="icons\open_folder.png" />
+    <Resource Include="icons\people.png" />
+    <Resource Include="icons\personal.png" />
+    <Resource Include="icons\prevItem.png" />
+    <Resource Include="icons\print.png" />
+    <Resource Include="icons\process.png" />
+    <Resource Include="icons\protection.png" />
+    <Resource Include="icons\refresh.png" />
+    <Resource Include="icons\revisor.png" />
+    <Resource Include="icons\run.png" />
+    <Resource Include="icons\runningProcesses.png" />
+    <Resource Include="icons\runProject.png" />
+    <Resource Include="icons\save.png" />
+    <Resource Include="icons\table.png" />
+    <Resource Include="icons\up.png" />
+    <Resource Include="icons\view.png" />
+    <Resource Include="icons\viewRelations.png" />
+    <Resource Include="icons\view_staff_info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 и x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>Клиентский профиль .NET Framework 3.5 с пакетом обновления 1 %28SP1%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VkNet\VkNet.csproj">
+      <Project>{8b031a92-84d4-4418-8551-18f1afeecc6c}</Project>
+      <Name>VkNet</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

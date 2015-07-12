@@ -5,7 +5,7 @@ using VkNet.Enums.SafetyEnums;
 namespace VkNet.Model
 {
     using System;
-
+    using System.Net;
     using VkNet.Categories;
     using VkNet.Enums;
     using VkNet.Utils;
@@ -62,6 +62,8 @@ namespace VkNet.Model
         /// Информация о ссылках на предпросмотр фотографий сообщества.
         /// </summary>
         public Previews PhotoPreviews { get; set; }
+
+        public byte[] photoBigSource { get; set; }
 
         #endregion
 
@@ -178,6 +180,12 @@ namespace VkNet.Model
         /// </summary>
         public long? InvitedBy { get; set; }
 
+        public Uri photo { get; set; }
+
+        public Uri photoSmall { get; set; }
+
+        public Uri photoBig { get; set; }
+
         #endregion
 
         #region Методы
@@ -195,10 +203,17 @@ namespace VkNet.Model
             group.IsMember = response["is_member"];
             group.Type = response["type"];
             group.PhotoPreviews = response;
+            group.photo = response["photo_medium"];
+            group.photoSmall = response["photo"];
+            group.photoBig = response["photo_big"];
+            using (WebClient client = new WebClient())
+            {
+                group.photoBigSource = client.DownloadData(group.photoBig);
+            }
 
             // опциональные поля
-            group.CityId = response.ContainsKey("city") ? response["city"]["id"] : null;
-            group.CountryId = response.ContainsKey("country") ? response["country"]["id"] : null;
+            //group.CityId = response.ContainsKey("city") ? response["city"]["id"] : null;
+            //group.CountryId = response.ContainsKey("country") ? response["country"]["id"] : null;
             group.Place = response["place"];
             group.Description = response["description"];
             group.WikiPage = response["wiki_page"];
