@@ -21,9 +21,9 @@ namespace VkGroupBot.Utils
     {
         private Group _group;
         VkApi vk = VkApiFactory.getInstance().getDefaultVkApi();
-        public PostmanHelper(VkGroup group)
+        public PostmanHelper(long groupUid)
         {
-            _group = VkGroupManager.getInstance().getGroupById(group.groupId);
+            _group = VkGroupManager.getInstance().getGroupById(groupUid);
         }
 
         public void postNew()
@@ -39,7 +39,7 @@ namespace VkGroupBot.Utils
                 {
                     allPosts.Add(getKef(post), post);
                     offset++;
-                    Thread.Sleep(1500);
+                    //Thread.Sleep(1500);
                 }
                 Thread.Sleep(2000);
             }
@@ -68,8 +68,7 @@ namespace VkGroupBot.Utils
                             byte[] downloaded = client.DownloadData(((Photo)medAtt).Photo604);
                             var values = new NameValueCollection();
                             values["photo"] = Convert.ToBase64String(downloaded);
-                            //byte[] responseByte = client.UploadValues(info.UploadUrl, values);
-                            //string s = client.Encoding.GetString(responseByte);
+                           
                             string s = HttpUploadFile(info.UploadUrl.ToString(), downloaded, "photo", "image/jpeg", nvc);
                             response = new JavaScriptSerializer().Deserialize<Dictionary<string, string>>(s);
                         }
@@ -92,7 +91,9 @@ namespace VkGroupBot.Utils
 
         private double getKef(Post post)
         {
-            return (post.Reposts.Count * 1.2 + post.Likes.Count);
+            int members = (int)_group.MembersCount;
+
+            return (float)(post.Reposts.Count * 1.2 + post.Likes.Count) / (float)members;
         }
         private List<string> testUids = new List<string>() { "club13704425", "psdnevnik", "eternity",  "velikieslova",
         "founddreams", "comotivation"};

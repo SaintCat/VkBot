@@ -5,8 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -29,7 +29,7 @@ namespace VkGroupBot
     /// </summary>
     public partial class Window1 : Window
     {
-        
+        VkGroup currentlySelectedGroup;
         public Window1()
         {
             InitializeComponent();
@@ -70,17 +70,23 @@ namespace VkGroupBot
             if (categoriesTreeView.SelectedItem is VkGroup)
             {
                 VkGroup item = (VkGroup)categoriesTreeView.SelectedItem;
+                currentlySelectedGroup = item;
                 Group group = VkGroupManager.getInstance().getGroupById(item.groupId);
                 nameLabel.Text = group.Name;
                 statusLabel.Content = group.Status;
                 Hyperlink link = new Hyperlink();
                 link.NavigateUri = new Uri("http://vk.com/" + group.ScreenName);
                 link.RequestNavigate += RequestNavigateEventHandler;
-               
+
                 link.Inlines.Add("vk.com/" + group.ScreenName);
                 linkLabel.Inlines.Clear();
                 linkLabel.Inlines.Add(link);
                 image.Source = ByteToImage(group.photoBigSource);
+                autoPostingCheckBox.IsChecked = item.autoPostingOn;
+            }
+            else
+            {
+                currentlySelectedGroup = null;
             }
           
 
@@ -111,26 +117,21 @@ namespace VkGroupBot
             return imgSrc;
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void autoPostingCheckBox_Checked_1(object sender, RoutedEventArgs e)
         {
-            if (categoriesTreeView.SelectedItem is VkGroup)
+            if (currentlySelectedGroup != null)
             {
-                const double interval60Minutes = 60 * 60 * 1000; // milliseconds to one hour
-                Timer checkForTime = new Timer(interval60Minutes);
-                    checkForTime.Elapsed += new ElapsedEventHandler(checkForTime_Elapsed);
-                checkForTime.Enabled = true;
+                currentlySelectedGroup.autoPostingOn = (bool)autoPostingCheckBox.IsChecked;
+                if (currentlySelectedGroup.autoPostingOn)
+                {
+                    TimersPool.startNewTask(currentlySelectedGroup.groupId);
+                }
+                else
+                {
+                    TimersPool.stopTimer(currentlySelectedGroup.groupId);
+                }
             }
         }
-
-        void checkForTime_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            
-               try {
-            VkGroup item = (VkGroup)categoriesTreeView.SelectedItem;
-                new PostmanHelper(item).postNew();
-               } catch(Exception ex) {
-               }
-            }
-        }
+    }
     
 }
