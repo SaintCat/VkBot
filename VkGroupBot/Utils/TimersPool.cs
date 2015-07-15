@@ -10,7 +10,7 @@ namespace VkGroupBot.Utils
     class TimersPool
     {
         private static Dictionary<long, Timer> timersPool = new Dictionary<long, Timer>();
-        private const long interval60Minutes = 60 * 60 * 1000;
+        private const long interval60Minutes = 40 * 60 * 1000;
         private static readonly object sychronized = new object();
         public static void startNewTask(long uid)
         {

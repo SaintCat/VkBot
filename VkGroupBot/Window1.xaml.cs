@@ -1,4 +1,9 @@
-﻿using System;
+﻿using NLog;
+using NLog.Config;
+using NLog.Fluent;
+using NLog.Targets;
+using NLog.Targets.Wrappers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -30,6 +35,8 @@ namespace VkGroupBot
     public partial class Window1 : Window
     {
         VkGroup currentlySelectedGroup;
+        private const string ConsoleTargetName = "WpfConsole";
+        private static Logger logger = LogManager.GetCurrentClassLogger();
         public Window1()
         {
             InitializeComponent();
@@ -63,10 +70,40 @@ namespace VkGroupBot
             person2.IsSelected = true;
 
             categoriesTreeView.ItemsSource = headCategories;
+
+         
+                logger.Info("Application started");
+            
+          
+        }
+
+        private void MainWindowInitialized(object sender, EventArgs e)
+        {
+            // Set Log Target
+            AsyncTargetWrapper _wrapper;
+            // https://nlog.codeplex.com/workitem/6272
+            var target = new WpfRichTextBoxTarget
+            {
+                Name = ConsoleTargetName,
+                Layout = "${time:}|${threadid:padding=3}|${level:uppercase=true:padding=-5}|${logger:padding=-15}|${message}|${exception}",
+                ControlName = TextLog.Name,
+                FormName = Name,
+                AutoScroll = true,
+                MaxLines = 100000,
+                UseDefaultRowColoringRules = true
+            };
+            _wrapper = new AsyncTargetWrapper
+            {
+                Name = ConsoleTargetName,
+                WrappedTarget = target
+            };
+            SimpleConfigurator.ConfigureForFileLogging("BotLog.txt", LogLevel.Trace);
+            SimpleConfigurator.ConfigureForTargetLogging(_wrapper, LogLevel.Info);
         }
 
         private void categoriesTreeView_Expanded(object sender, RoutedEventArgs e)
         {
+            logger.Error("ERROR " + sender.ToString());
             if (categoriesTreeView.SelectedItem is VkGroup)
             {
                 VkGroup item = (VkGroup)categoriesTreeView.SelectedItem;
