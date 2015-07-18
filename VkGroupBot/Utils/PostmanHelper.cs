@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -19,6 +20,7 @@ namespace VkGroupBot.Utils
 {
     class PostmanHelper
     {
+        Logger logger = LogManager.GetCurrentClassLogger();
         private Group _group;
         VkApi vk = VkApiFactory.getInstance().getDefaultVkApi();
         public PostmanHelper(long groupUid)
@@ -28,7 +30,7 @@ namespace VkGroupBot.Utils
 
         public void postNew()
         {
-            DateTime date = DateTime.Now.AddHours(-1);
+            DateTime date = DateTime.Now.AddMinutes(-40);
             SortedList<double, Post> allPosts = new SortedList<double, Post>();
             foreach(string groupNae in testUids) 
             {
@@ -43,10 +45,12 @@ namespace VkGroupBot.Utils
                 }
                 Thread.Sleep(2000);
             }
+            logger.Info("Find new posts in count " + allPosts.Count + " trying to get the best.");
             if (allPosts.Count > 0)
             {
                 Post best = allPosts[allPosts.Keys.Max()];
                 postThis(best);
+                logger.Info("Best is " +best.Id + " Text : " + best.Text);
             }
         }
 
@@ -85,7 +89,9 @@ namespace VkGroupBot.Utils
                 }
 
             }
-            vk.Wall.Post(-_group.Id, false, true, best.Text, mediaAttachments, null, null, false, null, null, null, null, null);
+         
+            long id = vk.Wall.Post(-_group.Id, false, true, best.Text, mediaAttachments, null, null, false, null, null, null, null, null);
+               logger.Info("new post published with id == " + id); 
    
         }
 
@@ -95,8 +101,8 @@ namespace VkGroupBot.Utils
 
             return (float)(post.Reposts.Count * 1.2 + post.Likes.Count) / (float)members;
         }
-        private List<string> testUids = new List<string>() { "club13704425", "psdnevnik", "eternity",  "velikieslova",
-        "founddreams", "comotivation"};
+        private List<string> testUids = new List<string>() { "club13704425", "eternity",  "velikieslova",
+        "founddreams", "comotivation", "1woman", "public41108497"};
 
         public static string HttpUploadFile(string url, byte[] file, string paramName, string contentType, NameValueCollection nvc)
         {
