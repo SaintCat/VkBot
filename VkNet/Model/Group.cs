@@ -206,9 +206,12 @@ namespace VkNet.Model
             group.photo = response["photo_medium"];
             group.photoSmall = response["photo"];
             group.photoBig = response["photo_big"];
-            using (WebClient client = new WebClient())
+            if (group.photoBig != null)
             {
-                group.photoBigSource = client.DownloadData(group.photoBig);
+                using (WebClient client = new WebClient())
+                {
+                    group.photoBigSource = client.DownloadData(group.photoBig);
+                }
             }
 
             // опциональные поля

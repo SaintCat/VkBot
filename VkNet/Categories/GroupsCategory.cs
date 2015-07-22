@@ -57,6 +57,15 @@
             return _vk.Call("groups.leave", parameters);
         }
 
+
+        public void Invite(long group_id, long user_id, long? captcha_sid = null, string captcha_key = null)
+        {
+            var parameters = new VkParameters { { "group_id", group_id }, 
+            { "user_id", user_id }, {"captcha_key", captcha_key}, {"captcha_sid", captcha_sid} };
+
+            _vk.Call("groups.invite", parameters);
+        }
+
         /// <summary>
         /// Возвращает список групп указанного пользователя.
         /// </summary>
@@ -177,11 +186,10 @@
         /// Страница документации ВКонтакте <see href="http://vk.com/dev/groups.search"/>.
         /// </remarks>
         [Pure]
-        public ReadOnlyCollection<Group> Search([NotNull] string query, out int totalCount, int? offset = null, int? count = null)
+        public ReadOnlyCollection<Group> Search( string query, out int totalCount, int? offset = null, int? count = null)
         {
-            VkErrors.ThrowIfNullOrEmpty(() => query);
-            
-            var parameters = new VkParameters { { "q", query }, { "offset", offset }, { "count", count } };
+           
+            var parameters = new VkParameters { { "q", query }, { "offset", offset }, { "count", count } , {"sort", 2}};
 
             VkResponseArray response = _vk.Call("groups.search", parameters);
 

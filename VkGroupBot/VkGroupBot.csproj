@@ -79,6 +79,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="antigate\SimpleAntiGate.cs" />
     <Compile Include="logger\WpfRichTextBoxRowColoringRule.cs" />
     <Compile Include="logger\WpfRichTextBoxTarget.cs" />
     <Compile Include="logger\WpfRichTextBoxWordColoringRule.cs" />

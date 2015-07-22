@@ -10,6 +10,7 @@
     using Enums.SafetyEnums;
     using Model;
     using Utils;
+    using VkNet.Enums;
 
     /// <summary>
     /// Методы для работы с информацией о пользователях.
@@ -46,6 +47,22 @@
                 throw new ArgumentException("Query can not be null or empty.");
 
             var parameters = new VkParameters { { "q", query }, { "fields", fields }, { "count", count } };
+            if (offset > 0)
+                parameters.Add("offset", offset);
+
+            VkResponseArray response = _vk.Call("users.search", parameters);
+
+            itemsCount = response[0];
+
+            return response.Skip(1).ToReadOnlyCollectionOf<User>(r => r);
+        }
+
+        [Pure]
+        public ReadOnlyCollection<User> SearchAdvanced(out int itemsCount, Sex sex, int age_from, ProfileFields fields = null, int count = 20, int offset = 0)
+        {
+           
+            var parameters = new VkParameters { { "q", "" }, { "fields", fields }, { "count", count }, {"sort", 1}, {"country", 1}, {"sex",sex}
+            ,{"age_from", age_from}, {"online", 1}, {"has_photo", 1}};
             if (offset > 0)
                 parameters.Add("offset", offset);
 

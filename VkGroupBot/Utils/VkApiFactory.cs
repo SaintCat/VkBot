@@ -8,13 +8,13 @@ using VkNet.Enums.Filters;
 
 namespace VkGroupBot.Utils
 {
-    class VkApiFactory
+    public class VkApiFactory
     {
         private static VkApiFactory instance;
         VkApi vk;
+        int appID = 4983267;    	// ID приложения  
         private VkApiFactory()
-        {
-            int appID = 4983267;                     	// ID приложения
+        {            
             string email = "dogs_heart14@mail.ru";        	// email или телефон
             string pass = "accfake14";              	// пароль для авторизации
             Settings scope = Settings.All;  	// Права доступа приложения
@@ -34,6 +34,14 @@ namespace VkGroupBot.Utils
 
         public VkApi getDefaultVkApi()
         {
+            return vk;
+        }
+
+
+        public VkApi getVkApi(string email, string pass, Settings settings)
+        {
+            vk = new VkApi();
+            vk.Authorize(appID, email, pass, settings);
             return vk;
         }
     }
