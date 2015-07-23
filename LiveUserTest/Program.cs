@@ -23,7 +23,7 @@ namespace LiveUserTest
         {
            
             AntiGate.AntiGateKey = "d14f05f2dbfc0bcb02e7ddfc72785e51";
-            VkApi vk = VkApiFactory.getInstance().getVkApi("dogs_heart16@mail.ru", "accfake16", Settings.All);
+            VkApi vk = VkApiFactory.getInstance().getVkApi("dogs_heart15@mail.ru", "accfake15", Settings.All);
             int ignor;
             IReadOnlyCollection<User> users = vk.Users.SearchAdvanced(out ignor, Sex.Female, 16, ProfileFields.All, 150, 50);
             List<UserTask> tasks = new List<UserTask>();
@@ -40,7 +40,7 @@ namespace LiveUserTest
                 System.Console.WriteLine("trying to add new user with id = " + user.Id);
                 if (validateUser(user))
                 {
-                    //tasks.Add(new LiveUserTest.UserTaskManager.AddNewFriend(vk, user));
+                    tasks.Add(new LiveUserTest.UserTaskManager.AddNewFriend(vk, user));
                     count++;
                 }       
             }
@@ -51,19 +51,19 @@ namespace LiveUserTest
             }
             for (int z = 0; z < 12; z++)
             {
-                //tasks.Add(new LiveUserTest.UserTaskManager.LikeToFriend(vk, us));       
+                tasks.Add(new LiveUserTest.UserTaskManager.LikeToFriend(vk, us));       
             }
             for (int z = 0; z < 5; z++)
             {
-                //tasks.Add(new LiveUserTest.UserTaskManager.JoinInSomeGroup(vk, us));
+                tasks.Add(new LiveUserTest.UserTaskManager.JoinInSomeGroup(vk, us));
             }
             for (int z = 0; z < 5; z++)
             {
-                //tasks.Add(new LiveUserTest.UserTaskManager.RepostFromSomeGroup(vk, us));
+                tasks.Add(new LiveUserTest.UserTaskManager.RepostFromSomeGroup(vk, us));
             }
             for (int z = 0; z < 8; z++)
             {
-                //tasks.Add(new LiveUserTest.UserTaskManager.RandomMessageToRandomFriend(vk, us));
+                tasks.Add(new LiveUserTest.UserTaskManager.RandomMessageToRandomFriend(vk, us));
             }
 
             new UserTaskManager(tasks).start();
@@ -87,7 +87,7 @@ namespace LiveUserTest
 
     public class UserTaskManager
     {
-        private const int interval = 60000*4;
+        private const int interval = 60000*2;
         private const int shift = 60000;
         private List<UserTask> _tasks;
         private Random r = new Random();
@@ -281,8 +281,9 @@ namespace LiveUserTest
                     {
                         break;
                     }
-                    ReadOnlyCollection<User> friend = vk.Friends.Get(user.Id);
-                    foreach(User us in friend)
+                    ReadOnlyCollection<User> friend = vk.Friends.Get(user.Id, ProfileFields.All);
+                    var friend2 = sort(friend);
+                    foreach (User us in friend2)
                     {
 
                         try
@@ -324,6 +325,28 @@ namespace LiveUserTest
                     Thread.Sleep(60000);
                 }
             }
+        }
+
+        private static List<User> sort(ReadOnlyCollection<User> friend)
+        {
+            List<User> res = new List<User>();
+            List<User> online = new List<User>();
+            List<User> notOnline = new List<User>();
+            foreach(User us in friend)
+            {
+                if ((bool)us.Online)
+                {
+                    online.Add(us);
+                }
+                else
+                {
+                    notOnline.Add(us);
+                }
+            }
+            res.AddRange(online);
+            res.AddRange(notOnline);
+
+            return res;
         }
 
         public class AddNewFriend : UserTask
