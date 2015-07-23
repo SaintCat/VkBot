@@ -86,8 +86,11 @@
     <Compile Include="Treeview\TreeViewItemBase.cs" />
     <Compile Include="Treeview\VkGroup.cs" />
     <Compile Include="Treeview\VkGroupCategory.cs" />
+    <Compile Include="Treeview\VkUser.cs" />
     <Compile Include="Utils\PostmanHelper.cs" />
     <Compile Include="Utils\TimersPool.cs" />
+    <Compile Include="Utils\UsersTaskPool.cs" />
+    <Compile Include="Utils\UserTaskManager.cs" />
     <Compile Include="Utils\VkGroupManager.cs" />
     <Compile Include="Window1.xaml.cs">
       <DependentUpon>Window1.xaml</DependentUpon>

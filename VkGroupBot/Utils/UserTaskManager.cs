@@ -1,4 +1,5 @@
-﻿using SimpleAntiGate;
+﻿using NLog;
+using SimpleAntiGate;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using VkGroupBot.Utils;
 using VkNet;
 using VkNet.Enums;
 using VkNet.Enums.Filters;
@@ -15,79 +15,92 @@ using VkNet.Exception;
 using VkNet.Model;
 using VkNet.Model.Attachments;
 
-namespace LiveUserTest
+namespace VkGroupBot.Utils
 {
-    class Program
+    
+    public class UserTaskHelper
     {
-        static void Main(string[] args)
-        {
-           
-            AntiGate.AntiGateKey = "d14f05f2dbfc0bcb02e7ddfc72785e51";
-            VkApi vk = VkApiFactory.getInstance().getVkApi("dogs_heart17@mail.ru", "accfake17", Settings.All);
-            int ignor;
-            IReadOnlyCollection<User> users = vk.Users.SearchAdvanced(out ignor, Sex.Female, 16, ProfileFields.All, 150, 50);
-            List<UserTask> tasks = new List<UserTask>();
+        static Logger logger = LogManager.GetCurrentClassLogger();
+        List<UserTask> tasks;
 
-             int count = 0;
+        public UserTaskHelper(string email, string password, Sex sex)
+        {
+            AntiGate.AntiGateKey = "d14f05f2dbfc0bcb02e7ddfc72785e51";
+            VkApi vk = VkApiFactory.getInstance().getVkApi(email, password, Settings.All);
+            int ignor;
+            IReadOnlyCollection<User> users = vk.Users.SearchAdvanced(out ignor, sex, 16, ProfileFields.All, 150, 50);
+            tasks = new List<UserTask>();
+
+            int count = 0;
             foreach (User user in users)
             {
                 if (count == 50)
                 {
-                    System.Console.WriteLine("End.......");
+                    logger.Debug("End.......");
                     break;
                 }
                 System.Console.WriteLine();
-                System.Console.WriteLine("trying to add new user with id = " + user.Id);
+                logger.Debug("trying to add new user with id = " + user.Id);
                 if (validateUser(user))
                 {
-                    tasks.Add(new LiveUserTest.UserTaskManager.AddNewFriend(vk, user));
+                    tasks.Add(new UserTaskManager.AddNewFriend(vk, user));
                     count++;
-                }       
+                }
             }
             User us = vk.Users.Get((long)vk.UserId, ProfileFields.All, null);
             for (int z = 0; z < 40; z++)
             {
-                tasks.Add(new LiveUserTest.UserTaskManager.InviteFriendInGroup(vk, us, 95032731));
+                tasks.Add(new UserTaskManager.InviteFriendInGroup(vk, us, 95032731));
             }
             for (int z = 0; z < 12; z++)
             {
-                tasks.Add(new LiveUserTest.UserTaskManager.LikeToFriend(vk, us));       
+                tasks.Add(new UserTaskManager.LikeToFriend(vk, us));
             }
             for (int z = 0; z < 5; z++)
             {
-                tasks.Add(new LiveUserTest.UserTaskManager.JoinInSomeGroup(vk, us));
+                tasks.Add(new UserTaskManager.JoinInSomeGroup(vk, us));
             }
             for (int z = 0; z < 6; z++)
             {
-                tasks.Add(new LiveUserTest.UserTaskManager.RepostFromSomeGroup(vk, us));
+                tasks.Add(new UserTaskManager.RepostFromSomeGroup(vk, us));
             }
             for (int z = 0; z < 8; z++)
             {
-                tasks.Add(new LiveUserTest.UserTaskManager.RandomMessageToRandomFriend(vk, us));
+                tasks.Add(new UserTaskManager.RandomMessageToRandomFriend(vk, us));
             }
 
+           
+
+        }
+
+        public void start()
+        {
             new UserTaskManager(tasks).start();
         }
 
-        private static bool validateUser(User user)
+        private bool validateUser(User user)
         {
-            
-           
+
+
             if (user.BirthDate == null || user.Online == false)
             {
-                System.Console.WriteLine("User is not valid online=" + user.Online + " friendCount=" +  user.Counters );
+                logger.Debug("User is not valid online=" + user.Online + " friendCount=" + user.Counters);
                 return false;
             }
-            System.Console.WriteLine("User is valid");
+            logger.Debug("User is valid");
             return true;
-         
+
         }
 
     }
 
+  
+
     public class UserTaskManager
     {
-        private const int interval = 60000*5;
+        static Logger logger = LogManager.GetCurrentClassLogger();
+        
+        private const int interval = 60000 * 5;
         private const int shift = 60000;
         private List<UserTask> _tasks;
         private Random r = new Random();
@@ -96,7 +109,7 @@ namespace LiveUserTest
         {
             this._tasks = task;
             Shuffle(this._tasks);
-            
+
         }
 
         public static void Shuffle<T>(IList<T> list)
@@ -115,7 +128,7 @@ namespace LiveUserTest
 
         public void start()
         {
-            foreach(UserTask task in _tasks)
+            foreach (UserTask task in _tasks)
             {
                 try
                 {
@@ -125,9 +138,10 @@ namespace LiveUserTest
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    logger.Error(ex.ToString());
                 }
             }
+            logger.Error("THIS IS FINALLY ENDED. EHHHHYYYY!!!!!!!!!!!!!!!");
         }
 
 
@@ -164,10 +178,11 @@ namespace LiveUserTest
                 int counter = 0;
                 while (!joined)
                 {
-                    Console.WriteLine("Join in some group");
+                    logger.Debug("Join in some group");
                     int total;
                     ReadOnlyCollection<Group> grous = vk.Groups.Search("Лучшее", out total, counter, 5);
-                    foreach(Group g in grous){
+                    foreach (Group g in grous)
+                    {
                         if (!(bool)g.IsMember)
                         {
                             vk.Groups.Join(g.Id);
@@ -192,9 +207,8 @@ namespace LiveUserTest
             }
 
             public void execute()
-
             {
-                Console.WriteLine("Reposting something from some group");
+                logger.Debug("Reposting something from some group");
                 ReadOnlyCollection<Group> groups = vk.Groups.Get(user.Id, true, GroupsFilters.All, GroupsFields.All, 0, 30);
                 Random r = new Random();
                 int rPos = r.Next(groups.Count);
@@ -203,7 +217,7 @@ namespace LiveUserTest
                 ReadOnlyCollection<Post> posts = vk.Wall.Get(0, groupForRepost.ScreenName, out total, 20, 0, WallFilter.All);
                 int rPost = r.Next(posts.Count);
                 Post p = posts[rPost];
-                vk.Wall.Repost("wall-" + groupForRepost.Id+ "_" + p.Id, ")", null);
+                vk.Wall.Repost("wall-" + groupForRepost.Id + "_" + p.Id, ")", null);
             }
         }
 
@@ -220,7 +234,7 @@ namespace LiveUserTest
 
             public void execute()
             {
-                Console.WriteLine("Likes photo of friend");
+                logger.Debug("Likes photo of friend");
                 ReadOnlyCollection<User> friend = vk.Friends.Get(user.Id);
                 Random r = new Random();
                 int rrr = r.Next(friend.Count);
@@ -243,7 +257,7 @@ namespace LiveUserTest
                     }
                     conter += photoes.Count;
                 }
-                
+
             }
         }
 
@@ -267,11 +281,13 @@ namespace LiveUserTest
                 if (!(System.IO.File.Exists(fileName)))
                 {
                     System.IO.File.Create(fileName).Close();
-                    alreadyUsedIds = new string[]{};
-                } else {
+                    alreadyUsedIds = new string[] { };
+                }
+                else
+                {
                     alreadyUsedIds = System.IO.File.ReadAllLines(fileName);
                 }
-                Console.WriteLine("Invited friend to group");
+                logger.Debug("Invited friend to group");
                 bool invited = false;
                 int countForRepeat = 5;
                 int repearcount = 0;
@@ -318,6 +334,7 @@ namespace LiveUserTest
                         }
                         catch (Exception ex)
                         {
+                            logger.Error(ex);
                             //System.IO.File.AppendAllLines(fileName, new string[] { us.Id.ToString() });   
                         }
                     }
@@ -332,7 +349,7 @@ namespace LiveUserTest
             List<User> res = new List<User>();
             List<User> online = new List<User>();
             List<User> notOnline = new List<User>();
-            foreach(User us in friend)
+            foreach (User us in friend)
             {
                 if ((bool)us.Online)
                 {
@@ -359,26 +376,26 @@ namespace LiveUserTest
                 this.vk = vk;
                 this.user = user;
             }
-            
+
             public void execute()
             {
                 try
                 {
                     vk.Friends.Add(user.Id, user.FirstName + ", привет. Можно с тобой познакомиться?)");
 
-                    System.Console.WriteLine("Request is sended to user with id = " + user.Id);
-                   
+                    logger.Debug("Request is sended to user with id = " + user.Id);
+
                 }
                 catch (CaptchaNeededException ex)
                 {
                     try
                     {
-                        System.Console.WriteLine("Oopps, catchaaaa =(((((");
+                        logger.Error("Oopps, catchaaaa =(((((");
                         string captchaAnswer = AntiGate.Recognize(ex.Img.AbsoluteUri);
-                        System.Console.WriteLine("catcha is " + captchaAnswer);
+                        logger.Error("catcha is " + captchaAnswer);
                         vk.Friends.Add(user.Id, user.FirstName + ", привет. Можно с тобой познакомиться?)", ex.Sid, captchaAnswer);
 
-                        System.Console.WriteLine("Request is sended to user with id = " + user.Id);
+                        logger.Error("Request is sended to user with id = " + user.Id);
                     }
                     catch (CaptchaNeededException ex2)
                     {

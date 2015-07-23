@@ -171,10 +171,43 @@
             </TabItem>
             <TabItem Header="Statistics"/>
             <TabItem Header="Log">
-                <RichTextBox x:Name="TextLog" Margin="10,0,7,0" IsReadOnly="True" FontFamily="Consolas" FontSize="12">
+                <RichTextBox x:Name="TextLog" Margin="10,0,7,0" IsReadOnly="True" FontFamily="Consolas" FontSize="12" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True">
             </RichTextBox>
         </TabItem>
-        <TabItem Header="Filling group"/>
+            <TabItem Header="Filling group">
+                     <Grid Background="#FFE5E5E5" Margin="0,0,0,13">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5*"/>
+                    <ColumnDefinition Width="172*"/>
+                    <ColumnDefinition Width="417*"/>
+                </Grid.ColumnDefinitions>
+                <GridSplitter HorizontalAlignment="Left" Width="6" Margin="0,10,0,0" Grid.Column="2" BorderBrush="#FF497DB2" Foreground="#FFBB1F1F" Background="#FF919191"/>
+                    <TreeView  SelectedItemChanged="usersTreeView_Selected" x:Name="usersTreeView" Grid.Column="1" Margin="10">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Name}" Margin="0,0,4,0" />
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                </TreeView>
+                <Grid Grid.Column="2" Margin="11,10,10,10">
+                    <Image x:Name="image2" Margin="10,10,0,0" HorizontalAlignment="Left" Width="128" Height="182" VerticalAlignment="Top"/>
+                    <Label x:Name="statusLabel2" Content="status&#xA;" HorizontalAlignment="Left" Margin="143,70,0,0" VerticalAlignment="Top" Width="262" Height="31"/>
+                    <TextBlock x:Name="nameLabel2"  HorizontalAlignment="Left" Margin="143,25,0,0" TextWrapping="Wrap" Text="GroupName" VerticalAlignment="Top" RenderTransformOrigin="0.53,0.281" Height="40" Width="257" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock x:Name="linkLabel2" HorizontalAlignment="Left" Margin="400,25,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="19" Width="154"/>
+                    <CheckBox Content="CheckBox" HorizontalAlignment="Left" Margin="363,177,0,0" VerticalAlignment="Top" OverridesDefaultStyle="True"/>
+                    <CheckBox Checked="autoPostingCheckBox2_Checked_1" Unchecked="autoPostingCheckBox_Checked_1" Name="autoPostingCheckBox2" Content="" Margin="0,156,10,0" VerticalAlignment="Top" Height="36" Style="{DynamicResource CheckBoxStyle1}" HorizontalAlignment="Right" Width="94"/>
+                    <Label Content="Work" Margin="0,156,121,0" Height="36" VerticalAlignment="Top" HorizontalAlignment="Right" Width="94"/>
+                </Grid>
+    </Grid>
+    </TabItem>
             
         </TabControl>
         

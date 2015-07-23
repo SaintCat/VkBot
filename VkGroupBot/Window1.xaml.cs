@@ -35,8 +35,9 @@ namespace VkGroupBot
     public partial class Window1 : Window
     {
         VkGroup currentlySelectedGroup;
+        VkUser currentlySelectedUser;
         private const string ConsoleTargetName = "WpfConsole";
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        public static Logger logger = LogManager.GetCurrentClassLogger();
         public Window1()
         {
             InitializeComponent();
@@ -70,6 +71,16 @@ namespace VkGroupBot
             person2.IsSelected = true;
 
             categoriesTreeView.ItemsSource = headCategories;
+            List<VkUser> userCategories = new List<VkUser>();
+            VkUser user1 = new VkUser() { Name = "User1", email="dogs_heart15@mail.ru", password="accfake15"};
+            VkUser user2 = new VkUser() { Name = "User2", email = "dogs_heart16@mail.ru", password = "accfake16" };
+            VkUser user3 = new VkUser() { Name = "User3", email = "dogs_heart17@mail.ru", password = "accfake17" };
+
+
+            userCategories.Add(user1);
+            userCategories.Add(user2);
+            userCategories.Add(user3);
+            usersTreeView.ItemsSource = userCategories;
 
          
                 logger.Info("Application started");
@@ -97,13 +108,12 @@ namespace VkGroupBot
                 Name = ConsoleTargetName,
                 WrappedTarget = target
             };
-            SimpleConfigurator.ConfigureForFileLogging("BotLog.txt", LogLevel.Trace);
-            SimpleConfigurator.ConfigureForTargetLogging(_wrapper, LogLevel.Info);
+            //SimpleConfigurator.ConfigureForFileLogging("BotLog.txt", LogLevel.Trace);
+            SimpleConfigurator.ConfigureForTargetLogging(_wrapper, LogLevel.Trace);
         }
 
         private void categoriesTreeView_Expanded(object sender, RoutedEventArgs e)
         {
-            logger.Error("ERROR " + sender.ToString());
             if (categoriesTreeView.SelectedItem is VkGroup)
             {
                 VkGroup item = (VkGroup)categoriesTreeView.SelectedItem;
@@ -166,6 +176,45 @@ namespace VkGroupBot
                 else
                 {
                     TimersPool.stopTimer(currentlySelectedGroup.groupId);
+                }
+            }
+        }
+
+        private void usersTreeView_Selected(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+
+                VkUser item = (VkUser)usersTreeView.SelectedItem;
+                currentlySelectedUser = item;
+                VkApi vk = VkApiFactory.getInstance().getVkApi(item.email, item.password, Settings.All);
+                User group = vk.Users.Get((long)vk.UserId, ProfileFields.All);
+                nameLabel2.Text = group.FirstName + " " + group.LastName;
+                statusLabel2.Content = group.Status;
+                Hyperlink link = new Hyperlink();
+                link.NavigateUri = new Uri("http://vk.com/" + group.Domain);
+                link.RequestNavigate += RequestNavigateEventHandler;
+
+                link.Inlines.Add("vk.com/" + group.Domain);
+                linkLabel2.Inlines.Clear();
+                linkLabel2.Inlines.Add(link);
+                //image.Source = ByteToImage(group.PhotoPreviews.Photo400);
+                autoPostingCheckBox2.IsChecked = item.workIsOn;
+           
+        }
+
+        private void autoPostingCheckBox2_Checked_1(object sender, RoutedEventArgs e)
+        {
+            if (currentlySelectedUser != null)
+            
+            {
+                logger.Error("Start new user taskk");
+                currentlySelectedUser.workIsOn = (bool)autoPostingCheckBox2.IsChecked;
+                if (currentlySelectedUser.workIsOn)
+                {
+                    UsersTaskPool.startNewTask(currentlySelectedUser);
+                }
+                else
+                {
+                    UsersTaskPool.stopTimer(currentlySelectedUser);
                 }
             }
         }
