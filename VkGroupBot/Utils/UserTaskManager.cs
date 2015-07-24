@@ -335,7 +335,7 @@ namespace VkGroupBot.Utils
                         catch (Exception ex)
                         {
                             logger.Error(ex);
-                            //System.IO.File.AppendAllLines(fileName, new string[] { us.Id.ToString() });   
+                            System.IO.File.AppendAllLines(fileName, new string[] { us.Id.ToString() });   
                         }
                     }
                     repearcount++;

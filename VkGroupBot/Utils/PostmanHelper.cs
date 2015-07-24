@@ -32,7 +32,8 @@ namespace VkGroupBot.Utils
         {
             DateTime date = DateTime.Now.AddMinutes(-40);
             SortedList<double, Post> allPosts = new SortedList<double, Post>();
-            foreach(string groupNae in testUids) 
+            List<string> listForUser = getListForUser(_group.Id);
+            foreach (string groupNae in listForUser) 
             {
                 int ignor;
                 int offset = 1;
@@ -99,10 +100,30 @@ namespace VkGroupBot.Utils
         {
             int members = (int)_group.MembersCount;
 
-            return (float)(post.Reposts.Count * 1.2 + post.Likes.Count) / (float)members;
+            return (float)(post.Reposts.Count * 2 + post.Likes.Count) /( (float)members * (DateTime.Now - (DateTime)post.Date).Minutes);
         }
+
+
+        private List<string> getListForUser(long groupId)
+        {
+            switch (groupId)
+            {
+                case 98013659:
+                    return uidsForHumor;
+                case 98738124:
+                    return uidsForPhotoes;
+                default:
+                    return new List<string>();
+            }
+        }
+
         private List<string> testUids = new List<string>() { "club13704425", "eternity",  "velikieslova",
-        "founddreams", "comotivation", "1woman", "public41108497"};
+        "founddreams", "comotivation", "1woman", "public41108497", "public86218441"};
+        private List<string> uidsForHumor = new List<string>() {"public12382740", "public10639516", "public31836774","public29246653", "public30179569", "public23064236", "public26419239", "public36164349", "public33159467", "public22741624","public34491673"};
+        private List<string> uidsForPhotoes = new List<string>() {"public27725748","public29411855", "public42564857", "public56905360", "club16979732", "public5880263", "public64628087", "public64173570", "club18099999", "public23308460" };
+
+
+
 
         public static string HttpUploadFile(string url, byte[] file, string paramName, string contentType, NameValueCollection nvc)
         {
