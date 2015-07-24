@@ -43,15 +43,15 @@ namespace VkGroupBot
             InitializeComponent();
             
             List<VkGroupCategory> headCategories = new List<VkGroupCategory>();
-            VkGroupCategory person1 = new VkGroupCategory() { Name = "Цитаты", isGroup = false };
+            VkGroupCategory person1 = new VkGroupCategory() { Name = "Фото", isGroup = false };
             person1.IconSource = person1.GetIconSource();
             VkGroupCategory person2 = new VkGroupCategory() { Name = "Юмор", isGroup = false };
             person2.IconSource = person2.GetIconSource();
-            VkGroup child1 = new VkGroup() { Name = "Юморная группа", isGroup = true, groupId = 10639516 };
+            VkGroup child1 = new VkGroup() { Name = "Лучший юмор", isGroup = true, groupId = 98013659 };
             child1.IconSource = child1.GetIconSource();
             person2.Children.Add(child1);
 
-            VkGroup test = new VkGroup() { Name = "Собачье сердце", isGroup = true, groupId = 95032731 };
+            VkGroup test = new VkGroup() { Name = "Лучшие фото", isGroup = true, groupId = 98738124 };
             test.IconSource = test.GetIconSource();
             person1.Children.Add(test);
             test = new VkGroup() { Name = "VkBoTest", isGroup = true, groupId = 97462940 };
@@ -60,16 +60,12 @@ namespace VkGroupBot
             person1.Children.Add(test);
            
 
-            VkGroupCategory person3 = new VkGroupCategory() { Name = "Фильмы", isGroup = false };
-            person3.IconSource = person1.GetIconSource();
-
             headCategories.Add(person1);
             headCategories.Add(person2);
-            headCategories.Add(person3);
 
+            person1.IsExpanded = true;
             person2.IsExpanded = true;
-            person2.IsSelected = true;
-
+           
             categoriesTreeView.ItemsSource = headCategories;
             List<VkUser> userCategories = new List<VkUser>();
             VkUser user1 = new VkUser() { Name = "User1", email="dogs_heart15@mail.ru", password="accfake15"};

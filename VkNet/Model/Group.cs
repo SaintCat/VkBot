@@ -217,7 +217,7 @@ namespace VkNet.Model
             // опциональные поля
             //group.CityId = response.ContainsKey("city") ? response["city"]["id"] : null;
             //group.CountryId = response.ContainsKey("country") ? response["country"]["id"] : null;
-            group.Place = response["place"];
+            //group.Place = response["place"];
             group.Description = response["description"];
             group.WikiPage = response["wiki_page"];
             group.MembersCount = response["members_count"];
