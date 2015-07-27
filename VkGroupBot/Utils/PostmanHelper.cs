@@ -33,14 +33,17 @@ namespace VkGroupBot.Utils
             DateTime date = DateTime.Now.AddMinutes(-40);
             SortedList<double, Post> allPosts = new SortedList<double, Post>();
             List<string> listForUser = getListForUser(_group.Id);
-            foreach (string groupNae in listForUser) 
+            foreach (string groupNae in listForUser)
             {
                 int ignor;
                 int offset = 1;
                 Post post;
-                while ((post = vk.Wall.Get(0, groupNae, out ignor, 1, offset, WallFilter.All)[0]).Date.Value.CompareTo(date) > 0)
+                while ((post = vk.Wall.Get(-Convert.ToInt64(groupNae), null, out ignor, 1, offset, WallFilter.All)[0]).Date.Value.CompareTo(date) > 0)
                 {
-                    allPosts.Add(getKef(post), post);
+                    if (!allPosts.ContainsKey(getKef(post)))
+                    {
+                        allPosts.Add(getKef(post), post);
+                    }
                     offset++;
                     //Thread.Sleep(1500);
                 }
@@ -51,7 +54,7 @@ namespace VkGroupBot.Utils
             {
                 Post best = allPosts[allPosts.Keys.Max()];
                 postThis(best);
-                logger.Info("Best is " +best.Id + " Text : " + best.Text);
+                logger.Info("Best is " + best.Id + " Text : " + best.Text);
             }
         }
 
@@ -73,7 +76,7 @@ namespace VkGroupBot.Utils
                             byte[] downloaded = client.DownloadData(((Photo)medAtt).Photo604);
                             var values = new NameValueCollection();
                             values["photo"] = Convert.ToBase64String(downloaded);
-                           
+
                             string s = HttpUploadFile(info.UploadUrl.ToString(), downloaded, "photo", "image/jpeg", nvc);
                             response = new JavaScriptSerializer().Deserialize<Dictionary<string, string>>(s);
                         }
@@ -90,17 +93,17 @@ namespace VkGroupBot.Utils
                 }
 
             }
-         
+
             long id = vk.Wall.Post(-_group.Id, false, true, best.Text, mediaAttachments, null, null, false, null, null, null, null, null);
-               logger.Info("new post published with id == " + id); 
-   
+            logger.Info("new post published with id == " + id);
+
         }
 
         private double getKef(Post post)
         {
             int members = (int)_group.MembersCount;
 
-            return (float)(post.Reposts.Count * 2 + post.Likes.Count) /( (float)members * (DateTime.Now - (DateTime)post.Date).Minutes);
+            return (float)(post.Reposts.Count * 2 + post.Likes.Count) / ((float)members * (DateTime.Now - (DateTime)post.Date).Minutes);
         }
 
 
@@ -119,8 +122,8 @@ namespace VkGroupBot.Utils
 
         private List<string> testUids = new List<string>() { "club13704425", "eternity",  "velikieslova",
         "founddreams", "comotivation", "1woman", "public41108497", "public86218441"};
-        private List<string> uidsForHumor = new List<string>() {"public12382740", "public10639516", "public31836774","public29246653", "public30179569", "public23064236", "public26419239", "public36164349", "public33159467", "public22741624","public34491673"};
-        private List<string> uidsForPhotoes = new List<string>() {"public27725748","public29411855", "public42564857", "public56905360", "club16979732", "public5880263", "public64628087", "public64173570", "club18099999", "public23308460" };
+        private List<string> uidsForHumor = new List<string>() { "12382740", "10639516", "31836774", "29246653", "30179569", "23064236", "26419239", "36164349", "33159467", "22741624", "34491673" };
+        private List<string> uidsForPhotoes = new List<string>() { "27725748", "29411855", "42564857", "56905360", "16979732", "5880263", "64628087", "64173570", "18099999", "23308460" };
 
 
 

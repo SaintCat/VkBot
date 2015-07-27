@@ -27,7 +27,9 @@ namespace VkGroupBot.Utils
         {            
             
             vk = new VkApi();
-            vk.Authorize(appID, email, pass, scope);
+            vk.isDefaultVkApi = true;
+            vk.email = email;
+            //vk.Authorize(appID, email, pass, scope);
             timer = new Timer(relogin, null, interval1day, interval1day);
         }
 
@@ -60,6 +62,8 @@ namespace VkGroupBot.Utils
             } else 
             {
                 vk = new VkApi();
+                vk.isDefaultVkApi = false;
+                vk.email = email;
                 vk.Authorize(appID, email, pass, settings);
                 VkApiWrapper wrap = new VkApiWrapper();
                 wrap.vk = vk;

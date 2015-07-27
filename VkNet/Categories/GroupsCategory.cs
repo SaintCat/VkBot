@@ -66,6 +66,8 @@
             _vk.Call("groups.invite", parameters);
         }
 
+        
+
         /// <summary>
         /// Возвращает список групп указанного пользователя.
         /// </summary>

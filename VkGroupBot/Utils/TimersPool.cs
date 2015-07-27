@@ -14,18 +14,18 @@ namespace VkGroupBot.Utils
         private static readonly object sychronized = new object();
         public static void startNewTask(long uid)
         {
-            if(!timersPool.ContainsKey(uid))
+            if (!timersPool.ContainsKey(uid))
             {
-            Timer checkForTime = new Timer(new TimeHandler(uid).doTask, null, 0, interval60Minutes);
-            timersPool.Add(uid, checkForTime);
+                Timer checkForTime = new Timer(new TimeHandler(uid).doTask, null, 0, interval60Minutes);
+                timersPool.Add(uid, checkForTime);
             }
         }
 
         public static void stopTimer(long uid)
         {
-            if(timersPool.ContainsKey(uid))
+            if (timersPool.ContainsKey(uid))
             {
-                timersPool[uid].Change(0, System.Threading.Timeout.Infinite);
+                timersPool[uid].Dispose();
                 timersPool[uid] = null;
                 timersPool.Remove(uid);
             }
@@ -42,7 +42,7 @@ namespace VkGroupBot.Utils
             {
                 lock (sychronized)
                 {
-                    new PostmanHelper(_uid).postNew();    
+                    new PostmanHelper(_uid).postNew();
                 }
             }
         }

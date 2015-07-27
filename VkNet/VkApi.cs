@@ -20,6 +20,8 @@
     /// </summary>
     public class VkApi
     {
+        public string email { get; set; }
+        public Boolean isDefaultVkApi {get;set;}
         internal const string InvalidAuthorization = "Invalid authorization";
         internal int _requestsPerSecond;
         internal int _minInterval;                  // Минимальное время, которое должно пройти между запросами чтобы не привысить кол-во запросов в секунду
@@ -220,7 +222,7 @@
 
         internal void _authorize(int appId, string email, string password, Settings settings, long? captcha_sid = null, string captcha_key = null)
         {
-            var authorization = Browser.Authorize(appId, email, password, settings, captcha_sid, captcha_key);
+            var authorization = Browser.Authorize(appId, email, password, settings, this, captcha_sid, captcha_key);
             if (!authorization.IsAuthorized)
                 throw new VkApiAuthorizationException(InvalidAuthorization, email, password);
 
@@ -308,7 +310,7 @@
 
             string url = GetApiUrl(methodName, parameters);
             
-            string answer = Browser.GetJson(url);
+            string answer = Browser.GetJson(url, this);
             LastInvokeTime = DateTimeOffset.Now;
             
 #if DEBUG && !UNIT_TEST

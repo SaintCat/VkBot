@@ -68,13 +68,10 @@ namespace VkGroupBot
            
             categoriesTreeView.ItemsSource = headCategories;
             List<VkUser> userCategories = new List<VkUser>();
-            VkUser user1 = new VkUser() { Name = "User1", email="dogs_heart15@mail.ru", password="accfake15"};
-            VkUser user2 = new VkUser() { Name = "User2", email = "dogs_heart16@mail.ru", password = "accfake16" };
-            VkUser user3 = new VkUser() { Name = "User3", email = "dogs_heart17@mail.ru", password = "accfake17" };
+            VkUser user3 = new VkUser() { Name = "User3", email = "dogs_heart18@mail.ru", password = "accfake18" };
 
 
-            userCategories.Add(user1);
-            userCategories.Add(user2);
+            
             userCategories.Add(user3);
             usersTreeView.ItemsSource = userCategories;
 

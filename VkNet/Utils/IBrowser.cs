@@ -13,7 +13,7 @@
         /// </summary>
         /// <param name="url">URL, в котором закодированы параметры запроса.</param>
         /// <returns>Результат выполнения запроса, полученный от сервера в формате JSON.</returns>
-        string GetJson(string url);
+        string GetJson(string url, VkApi vkApi);
 
 #if false
         /// <summary>
@@ -38,6 +38,6 @@
         /// <returns>
         /// Информация об авторизации приложения.
         /// </returns>
-        VkAuthorization Authorize(int appId, string email, string password, Settings settings, long? captcha_sid, string captcha_key);
+        VkAuthorization Authorize(int appId, string email, string password, Settings settings, VkApi vkApi, long? captcha_sid, string captcha_key);
     }
 }

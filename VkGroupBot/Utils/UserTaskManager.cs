@@ -28,13 +28,13 @@ namespace VkGroupBot.Utils
             AntiGate.AntiGateKey = "d14f05f2dbfc0bcb02e7ddfc72785e51";
             VkApi vk = VkApiFactory.getInstance().getVkApi(email, password, Settings.All);
             int ignor;
-            IReadOnlyCollection<User> users = vk.Users.SearchAdvanced(out ignor, sex, 16, ProfileFields.All, 150, 50);
+            IReadOnlyCollection<User> users = vk.Users.SearchAdvanced(out ignor, sex.Equals(Sex.Female) ? Sex.Male : Sex.Female, 16, ProfileFields.All, 150, 50);
             tasks = new List<UserTask>();
 
             int count = 0;
             foreach (User user in users)
             {
-                if (count == 50)
+                if (count == 40)
                 {
                     logger.Debug("End.......");
                     break;
@@ -48,15 +48,19 @@ namespace VkGroupBot.Utils
                 }
             }
             User us = vk.Users.Get((long)vk.UserId, ProfileFields.All, null);
-            for (int z = 0; z < 40; z++)
+            for (int z = 0; z < 15; z++)
             {
-                tasks.Add(new UserTaskManager.InviteFriendInGroup(vk, us, 95032731));
+                tasks.Add(new UserTaskManager.InviteFriendInGroup(vk, us, 98738124));
             }
-            for (int z = 0; z < 12; z++)
+            for (int z = 0; z < 15; z++)
+            {
+                tasks.Add(new UserTaskManager.InviteFriendInGroup(vk, us, 98013659));
+            }
+            for (int z = 0; z < 15; z++)
             {
                 tasks.Add(new UserTaskManager.LikeToFriend(vk, us));
             }
-            for (int z = 0; z < 5; z++)
+            for (int z = 0; z < 8; z++)
             {
                 tasks.Add(new UserTaskManager.JoinInSomeGroup(vk, us));
             }
@@ -100,7 +104,7 @@ namespace VkGroupBot.Utils
     {
         static Logger logger = LogManager.GetCurrentClassLogger();
         
-        private const int interval = 60000 * 5;
+        private const int interval = 60000 * 6;
         private const int shift = 60000;
         private List<UserTask> _tasks;
         private Random r = new Random();
@@ -236,6 +240,10 @@ namespace VkGroupBot.Utils
             {
                 logger.Debug("Likes photo of friend");
                 ReadOnlyCollection<User> friend = vk.Friends.Get(user.Id);
+                if (friend.Count == 0)
+                {
+                    return;
+                }
                 Random r = new Random();
                 int rrr = r.Next(friend.Count);
                 User us = friend[rrr];
@@ -298,13 +306,17 @@ namespace VkGroupBot.Utils
                         break;
                     }
                     ReadOnlyCollection<User> friend = vk.Friends.Get(user.Id, ProfileFields.All);
+                    if (friend.Count == 0)
+                    {
+                        return;
+                    }
                     var friend2 = sort(friend);
                     foreach (User us in friend2)
                     {
 
                         try
                         {
-                            if (!vk.Groups.IsMember(groupName, us.Id) && !alreadyUsedIds.Contains(user.Id.ToString()))
+                            if (!alreadyUsedIds.Contains(user.Id.ToString()) && !vk.Groups.IsMember(groupName, us.Id) )
                             {
                                 try
                                 {
@@ -328,6 +340,8 @@ namespace VkGroupBot.Utils
                                     catch (CaptchaNeededException ex2)
                                     {
                                         AntiGate.ReportBad(AntiGate.LastCaptchaId);
+                                        System.IO.File.AppendAllLines(fileName, new string[] { us.Id.ToString() });
+                                        
                                     }
                                 }
                             }
