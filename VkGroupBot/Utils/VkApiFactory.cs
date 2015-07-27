@@ -29,7 +29,7 @@ namespace VkGroupBot.Utils
             vk = new VkApi();
             vk.isDefaultVkApi = true;
             vk.email = email;
-            //vk.Authorize(appID, email, pass, scope);
+            vk.Authorize(appID, email, pass, scope);
             timer = new Timer(relogin, null, interval1day, interval1day);
         }
 
