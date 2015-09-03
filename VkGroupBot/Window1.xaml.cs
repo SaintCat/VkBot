@@ -68,11 +68,14 @@ namespace VkGroupBot
            
             categoriesTreeView.ItemsSource = headCategories;
             List<VkUser> userCategories = new List<VkUser>();
-            VkUser user3 = new VkUser() { Name = "User3", email = "dogs_heart18@mail.ru", password = "accfake18" };
-
-
-            
+            VkUser user3 = new VkUser() { Name = "User3", email = "dogs_heart14@mail.ru", password = "accfake14" };
+            //VkUser user4 = new VkUser() { Name = "User4", email = "dogs_heart24@mail.ru", password = "accfake24" };
+            //VkUser user5 = new VkUser() { Name = "User5", email = "dogs_heart23@mail.ru", password = "accfake22" };
+            //VkUser user6 = new VkUser() { Name = "User6", email = "dogs_heart25@mail.ru", password = "accfake25" };
             userCategories.Add(user3);
+            //userCategories.Add(user4);
+            //userCategories.Add(user5);
+            //userCategories.Add(user6);
             usersTreeView.ItemsSource = userCategories;
 
          
@@ -175,10 +178,12 @@ namespace VkGroupBot
 
         private void usersTreeView_Selected(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-
+            try
+            {
                 VkUser item = (VkUser)usersTreeView.SelectedItem;
                 currentlySelectedUser = item;
-                VkApi vk = VkApiFactory.getInstance().getVkApi(item.email, item.password, Settings.All);
+                //VkApi vk = VkApiFactory.getInstance().getVkApi(item.email, item.password, Settings.All);
+                VkApi vk = VkApiFactory.getInstance().getDefaultVkApi();
                 User group = vk.Users.Get((long)vk.UserId, ProfileFields.All);
                 nameLabel2.Text = group.FirstName + " " + group.LastName;
                 statusLabel2.Content = group.Status;
@@ -191,6 +196,12 @@ namespace VkGroupBot
                 linkLabel2.Inlines.Add(link);
                 //image.Source = ByteToImage(group.PhotoPreviews.Photo400);
                 autoPostingCheckBox2.IsChecked = item.workIsOn;
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
            
         }
 

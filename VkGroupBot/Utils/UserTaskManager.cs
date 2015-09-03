@@ -3,7 +3,9 @@ using SimpleAntiGate;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,55 +28,157 @@ namespace VkGroupBot.Utils
         public UserTaskHelper(string email, string password, Sex sex)
         {
             AntiGate.AntiGateKey = "d14f05f2dbfc0bcb02e7ddfc72785e51";
-            VkApi vk = VkApiFactory.getInstance().getVkApi(email, password, Settings.All);
+            VkApi vk = VkApiFactory.getInstance().getDefaultVkApi();
+           
             int ignor;
-            IReadOnlyCollection<User> users = vk.Users.SearchAdvanced(out ignor, sex.Equals(Sex.Female) ? Sex.Male : Sex.Female, 16, ProfileFields.All, 150, 50);
             tasks = new List<UserTask>();
 
-            int count = 0;
-            foreach (User user in users)
+            for (int z = 0; z < 50; z++)
             {
-                if (count == 40)
-                {
-                    logger.Debug("End.......");
-                    break;
-                }
-                System.Console.WriteLine();
-                logger.Debug("trying to add new user with id = " + user.Id);
-                if (validateUser(user))
-                {
-                    tasks.Add(new UserTaskManager.AddNewFriend(vk, user));
-                    count++;
-                }
+                  tasks.Add(new UserTaskManager.AddNewFriend(vk, sex));
             }
             User us = vk.Users.Get((long)vk.UserId, ProfileFields.All, null);
-            for (int z = 0; z < 15; z++)
+            for (int z = 0; z < 20; z++)
             {
-                tasks.Add(new UserTaskManager.InviteFriendInGroup(vk, us, 98738124));
+                //tasks.Add(new UserTaskManager.InviteFriendInGroup(vk, us, 98738124));
             }
-            for (int z = 0; z < 15; z++)
+            for (int z = 0; z < 20; z++)
             {
-                tasks.Add(new UserTaskManager.InviteFriendInGroup(vk, us, 98013659));
+                //tasks.Add(new UserTaskManager.InviteFriendInGroup(vk, us, 98013659));
             }
-            for (int z = 0; z < 15; z++)
+            for (int z = 0; z < 12; z++)
             {
                 tasks.Add(new UserTaskManager.LikeToFriend(vk, us));
             }
             for (int z = 0; z < 8; z++)
             {
-                tasks.Add(new UserTaskManager.JoinInSomeGroup(vk, us));
+                //tasks.Add(new UserTaskManager.JoinInSomeGroup(vk, us));
             }
-            for (int z = 0; z < 6; z++)
+            for (int z = 0; z < 3; z++)
             {
-                tasks.Add(new UserTaskManager.RepostFromSomeGroup(vk, us));
+            tasks.Add(new UserTaskManager.RepostFromSomeGroup(vk, us));
+           }
+           for (int z = 0; z < 8; z++)
+           {
+                //tasks.Add(new UserTaskManager.RandomMessageToRandomFriend(vk, us));
+           }
+
+           Thread myThread = new System.Threading.Thread(delegate()
+           {
+               startBot(vk);
+           });
+           myThread.IsBackground = true;
+           myThread.Start();
+
+        }
+
+
+        private static List<Message> getUnreadedMessages(ReadOnlyCollection<Message> messages)
+        {
+            List<Message> res = new List<Message>();
+            foreach (Message m in messages)
+            {
+                if (m.ReadState == MessageReadState.Unreaded && m.ChatId == null)
+                {
+                    if (m.Date.Value.DayOfYear == System.DateTime.Now.DayOfYear)
+                    {
+                        res.Add(m);
+                    }
+                }
             }
-            for (int z = 0; z < 8; z++)
+            return res;
+        }
+
+        private static Dictionary<long, int> messageCount = new Dictionary<long, int>();
+        static List<string> primes = new List<string>(new string[] {"Кстати, может быть вступишь в группы, которые на моей стене? ты мне очень поможешь",
+            "Что насчет того, чтобы вступить в группы на моей стене?))",
+        "Мб вступишь в группу на моей стене? Я буду тебе благодарен",
+        "Если вступишь в группу на моей стене, я пришлю тебе свое фото :P"});
+        static Random rnd = new Random();
+        static void startBot(VkApi vk)
+        {
+             while (true)
             {
-                tasks.Add(new UserTaskManager.RandomMessageToRandomFriend(vk, us));
+                try
+                {
+                    int total = 0;
+                    ReadOnlyCollection<Message> messages = vk.Messages.Get(MessageType.Received, out total);
+                    logger.Info("New messages in count = " + total);
+                    List<Message> unreaded = getUnreadedMessages(messages);
+                    foreach (Message m in unreaded)
+                    {
+                        try
+                        {
+                            if (messageCount.ContainsKey((long)m.UserId))
+                            {
+                                messageCount[(long)m.UserId] = messageCount[(long)m.UserId] + 1;
+                            }
+                            else
+                            {
+                                messageCount.Add((long)m.UserId, 1);
+                            }
+                            string answer = getAnswer((long)vk.UserId, (long)m.UserId, m.Body);
+                            answer = answer.Replace("Виу-пиу", "Александр");
+                            answer = answer.Replace("<userlink>", "");
+                            answer = answer.Replace("</userlink>", "");
+                            answer = answer.Replace("</br>", "");
+                            answer = answer.Replace("<br>", "");
+                            answer = answer.Replace("Инф", "человек");
+                            answer = answer.Replace("инф", "человек");
+                            answer = answer.Replace("малявка", "совсем не взрослая");
+                            answer = answer.Replace("старикашка", "совсем взрослая");
+                            vk.Messages.MarkAsRead((long)m.Id);
+                            vk.Messages.SetActivity((long)m.UserId);
+
+                            Thread.Sleep(4500);
+                            vk.Messages.Send((long)m.UserId, false, answer);
+                            if (messageCount[(long)m.UserId] % 30 == 0)
+                            {
+                                Thread.Sleep(2000);
+                                int r = rnd.Next(primes.Count);
+                                vk.Messages.Send((long)m.UserId, false, primes[r]);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error(ex.ToString());
+                        }
+                    }
+                    Thread.Sleep(2500);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
+                }
             }
 
-           
+        }
 
+        private static string getAnswer(long userId, long senderId, String reply)
+        {
+            string answer = null;
+            using (var client = new WebClient())
+            {
+                var values = new NameValueCollection();
+                values["id"] = Convert.ToString(senderId);
+                values["botid"] = "970c8b3d-2e25-471d-8aab-efc87bcb7155";
+
+                var response = client.UploadValues("http://bot.mew.su/service/getsession.php", values);
+
+                var responseString = Encoding.Default.GetString(response);
+                logger.Debug(responseString);
+
+                var values2 = new NameValueCollection();
+                values2["session"] = responseString;
+                values2["botid"] = Convert.ToString(userId);
+                values2["sender"] = Convert.ToString(senderId);
+                values2["ischat"] = "0";
+                values2["text"] = reply;
+                var response2 = client.UploadValues("http://bot.mew.su/service/speak.php", values2);
+                answer = Encoding.UTF8.GetString(response2);
+                logger.Debug(answer);
+            }
+            return answer;
         }
 
         public void start()
@@ -88,10 +192,10 @@ namespace VkGroupBot.Utils
 
             if (user.BirthDate == null || user.Online == false)
             {
-                logger.Debug("User is not valid online=" + user.Online + " friendCount=" + user.Counters);
+                logger.Debug( "User is not valid online=" + user.Online + " friendCount=" + user.Counters);
                 return false;
             }
-            logger.Debug("User is valid");
+            logger.Debug( "User is valid");
             return true;
 
         }
@@ -104,8 +208,8 @@ namespace VkGroupBot.Utils
     {
         static Logger logger = LogManager.GetCurrentClassLogger();
         
-        private const int interval = 60000 * 6;
-        private const int shift = 60000;
+        private const int interval = 60000 * 3;
+        private const int shift = 30000;
         private List<UserTask> _tasks;
         private Random r = new Random();
 
@@ -182,7 +286,7 @@ namespace VkGroupBot.Utils
                 int counter = 0;
                 while (!joined)
                 {
-                    logger.Debug("Join in some group");
+                    logger.Debug(vk.email + " " + "Join in some group");
                     int total;
                     ReadOnlyCollection<Group> grous = vk.Groups.Search("Лучшее", out total, counter, 5);
                     foreach (Group g in grous)
@@ -194,7 +298,7 @@ namespace VkGroupBot.Utils
                             break;
                         }
                     }
-                    counter += total;
+                    counter += 5;
                 }
             }
         }
@@ -212,7 +316,7 @@ namespace VkGroupBot.Utils
 
             public void execute()
             {
-                logger.Debug("Reposting something from some group");
+                logger.Debug(vk.email + " " + "Reposting something from some group");
                 ReadOnlyCollection<Group> groups = vk.Groups.Get(user.Id, true, GroupsFilters.All, GroupsFields.All, 0, 30);
                 Random r = new Random();
                 int rPos = r.Next(groups.Count);
@@ -238,7 +342,7 @@ namespace VkGroupBot.Utils
 
             public void execute()
             {
-                logger.Debug("Likes photo of friend");
+                logger.Debug(vk.email + " " + "Likes photo of friend");
                 ReadOnlyCollection<User> friend = vk.Friends.Get(user.Id);
                 if (friend.Count == 0)
                 {
@@ -295,7 +399,7 @@ namespace VkGroupBot.Utils
                 {
                     alreadyUsedIds = System.IO.File.ReadAllLines(fileName);
                 }
-                logger.Debug("Invited friend to group");
+                logger.Debug(vk.email + " " + "Invited friend to group");
                 bool invited = false;
                 int countForRepeat = 5;
                 int repearcount = 0;
@@ -316,7 +420,7 @@ namespace VkGroupBot.Utils
 
                         try
                         {
-                            if (!alreadyUsedIds.Contains(user.Id.ToString()) && !vk.Groups.IsMember(groupName, us.Id) )
+                            if (!alreadyUsedIds.Contains(us.Id.ToString()) && !vk.Groups.IsMember(groupName, us.Id))
                             {
                                 try
                                 {
@@ -383,33 +487,41 @@ namespace VkGroupBot.Utils
         public class AddNewFriend : UserTask
         {
             VkApi vk;
-            private User user;
+            private Sex sex;
 
-            public AddNewFriend(VkApi vk, User user)
+            public AddNewFriend(VkApi vk, Sex sex)
             {
                 this.vk = vk;
-                this.user = user;
+                this.sex = sex;
             }
 
             public void execute()
             {
+                int ignor;
+                Random rnd = new Random();
+                int offset = rnd.Next(100);
+                IReadOnlyCollection<User> users2 = vk.Users.SearchAdvanced(out ignor, sex.Equals(Sex.Female) ? Sex.Male : Sex.Female, 16, ProfileFields.All, 15, offset);
+                
+                User user = users2.ToList<User>()[rnd.Next(users2.Count)];
+                
                 try
                 {
+                    
                     vk.Friends.Add(user.Id, user.FirstName + ", привет. Можно с тобой познакомиться?)");
 
-                    logger.Debug("Request is sended to user with id = " + user.Id);
+                    logger.Debug(vk.email + " " + "Request is sended to user with id = " + user.Id);
 
                 }
                 catch (CaptchaNeededException ex)
                 {
                     try
                     {
-                        logger.Error("Oopps, catchaaaa =(((((");
+                        logger.Error(vk.email + " " + "Oopps, catchaaaa =(((((");
                         string captchaAnswer = AntiGate.Recognize(ex.Img.AbsoluteUri);
-                        logger.Error("catcha is " + captchaAnswer);
+                        logger.Error(vk.email + " " + "catcha is " + captchaAnswer);
                         vk.Friends.Add(user.Id, user.FirstName + ", привет. Можно с тобой познакомиться?)", ex.Sid, captchaAnswer);
 
-                        logger.Error("Request is sended to user with id = " + user.Id);
+                        logger.Error(vk.email + " " + "Request is sended to user with id = " + user.Id);
                     }
                     catch (CaptchaNeededException ex2)
                     {

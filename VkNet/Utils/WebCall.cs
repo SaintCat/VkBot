@@ -75,6 +75,7 @@
             {
                 request.Proxy.Credentials = new NetworkCredential(splitted[2], splitted[3]);
             }
+            request.KeepAlive = true;
         }
 
         public static WebCallResult Post(WebForm form, VkApi vk)

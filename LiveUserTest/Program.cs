@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,68 +21,79 @@ namespace LiveUserTest
 {
     class Program
     {
+
+        private static List<Message> getUnreadedMessages(ReadOnlyCollection<Message> messages)
+        {
+            List<Message> res = new List<Message>();
+            foreach (Message m in messages)
+            {
+                if (m.ReadState == MessageReadState.Unreaded)
+                {
+                    if (m.Date.Value.DayOfYear == System.DateTime.Now.DayOfYear)
+                    {
+                        res.Add(m);
+                    }
+                }
+            }
+            return res;
+        }
         static void Main(string[] args)
         {
-           
-            AntiGate.AntiGateKey = "d14f05f2dbfc0bcb02e7ddfc72785e51";
-            VkApi vk = VkApiFactory.getInstance().getVkApi("dogs_heart17@mail.ru", "accfake17", Settings.All);
-            int ignor;
-            IReadOnlyCollection<User> users = vk.Users.SearchAdvanced(out ignor, Sex.Female, 16, ProfileFields.All, 150, 50);
-            List<UserTask> tasks = new List<UserTask>();
-
-             int count = 0;
-            foreach (User user in users)
+            VkApi vk = VkApiFactory.getInstance().getDefaultVkApi();
+            vk.isDefaultVkApi = true;
+            while (true)
             {
-                if (count == 50)
+                
+                int total = 0;
+                ReadOnlyCollection<Message> messages = vk.Messages.Get(MessageType.Received, out total);
+                Console.WriteLine("New messages in count = " + total);
+                List<Message> unreaded = getUnreadedMessages(messages);
+                foreach(Message m in unreaded) 
                 {
-                    System.Console.WriteLine("End.......");
-                    break;
+                    try
+                    {
+                        string answer = getAnswer((long)vk.UserId, (long)m.UserId, m.Body);
+                        vk.Messages.MarkAsRead((long)m.Id);
+                        vk.Messages.SetActivity((long)m.UserId);
+
+                        Thread.Sleep(4000);
+                        vk.Messages.Send((long)m.UserId, false, answer);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Write(ex.ToString());
+                    }
                 }
-                System.Console.WriteLine();
-                System.Console.WriteLine("trying to add new user with id = " + user.Id);
-                if (validateUser(user))
-                {
-                    tasks.Add(new LiveUserTest.UserTaskManager.AddNewFriend(vk, user));
-                    count++;
-                }       
-            }
-            User us = vk.Users.Get((long)vk.UserId, ProfileFields.All, null);
-            for (int z = 0; z < 40; z++)
-            {
-                tasks.Add(new LiveUserTest.UserTaskManager.InviteFriendInGroup(vk, us, 95032731));
-            }
-            for (int z = 0; z < 12; z++)
-            {
-                tasks.Add(new LiveUserTest.UserTaskManager.LikeToFriend(vk, us));       
-            }
-            for (int z = 0; z < 5; z++)
-            {
-                tasks.Add(new LiveUserTest.UserTaskManager.JoinInSomeGroup(vk, us));
-            }
-            for (int z = 0; z < 6; z++)
-            {
-                tasks.Add(new LiveUserTest.UserTaskManager.RepostFromSomeGroup(vk, us));
-            }
-            for (int z = 0; z < 8; z++)
-            {
-                tasks.Add(new LiveUserTest.UserTaskManager.RandomMessageToRandomFriend(vk, us));
+                Thread.Sleep(1500);
             }
 
-            new UserTaskManager(tasks).start();
         }
 
-        private static bool validateUser(User user)
+        private static string getAnswer(long userId, long senderId, String reply)
         {
-            
-           
-            if (user.BirthDate == null || user.Online == false)
+            string answer = null;
+            using (var client = new WebClient())
             {
-                System.Console.WriteLine("User is not valid online=" + user.Online + " friendCount=" +  user.Counters );
-                return false;
+                var values = new NameValueCollection();
+                values["id"] = Convert.ToString(userId);
+                values["botid"] = "970c8b3d-2e25-471d-8aab-efc87bcb7155";
+            
+                var response = client.UploadValues("http://bot.mew.su/service/getsession.php", values);
+
+                var responseString = Encoding.Default.GetString(response);
+                System.Console.WriteLine(responseString);
+
+                var values2 = new NameValueCollection();
+                values2["session"] = responseString;
+                values2["botid"] = Convert.ToString(userId);
+                values2["sender"] = Convert.ToString(senderId);
+                values2["ischat"] = "0";
+                values2["text"] = reply;
+                var response2 = client.UploadValues("http://bot.mew.su/service/speak.php", values2);
+                answer = Encoding.UTF8.GetString(response2);
+                System.Console.WriteLine(answer);
             }
-            System.Console.WriteLine("User is valid");
-            return true;
-         
+            return answer;
         }
 
     }

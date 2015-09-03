@@ -534,7 +534,7 @@ namespace VkNet.Categories
         /// </remarks>
         public bool SetActivity(long userId)
         {
-            var parameters = new VkParameters { { "used_id", userId }, { "type", "typing" } };
+            var parameters = new VkParameters { { "user_id", userId }, { "type", "typing" } };
 
             return _vk.Call("messages.setActivity", parameters);
         }

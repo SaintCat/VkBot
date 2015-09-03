@@ -11,7 +11,7 @@ namespace VkGroupBot.Utils
     {
         private static Dictionary<long, Timer> timersPool = new Dictionary<long, Timer>();
         private const long interval60Minutes = 40 * 60 * 1000;
-        private static readonly object sychronized = new object();
+       
         public static void startNewTask(long uid)
         {
             if (!timersPool.ContainsKey(uid))
@@ -40,10 +40,9 @@ namespace VkGroupBot.Utils
             }
             public void doTask(object sender)
             {
-                lock (sychronized)
-                {
+                
                     new PostmanHelper(_uid).postNew();
-                }
+               
             }
         }
     }

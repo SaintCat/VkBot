@@ -17,7 +17,7 @@ namespace VkGroupBot.Utils
         {
             if (!timersPool.ContainsKey(user.email))
             {
-                Thread checkForTime = new Thread(new TimeHandler(user.email, user.password, Sex.Female).doTask);
+                Thread checkForTime = new Thread(new TimeHandler(user.email, user.password, Sex.Male).doTask);
                 checkForTime.IsBackground = true;
                 timersPool.Add(user.email, checkForTime);
                 checkForTime.Start();

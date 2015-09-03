@@ -16,7 +16,12 @@ namespace VkNet
         private ProxyManager()
         {
             proxies = new List<string>();
-            proxies.Add("81.176.228.20:8972:test:7VeYQ7T4");
+            //proxies.Add("81.176.228.20:8972:test:i3zYXBSU");
+            proxies.Add("91.198.127.241:8085");
+            proxies.Add("91.216.3.2:8085");
+            proxies.Add("37.230.212.6:8085");
+            proxies.Add("93.179.91.244:8085");
+            proxies.Add("37.18.42.4:8085");
             
             free.AddRange(proxies);
         }
